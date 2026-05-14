@@ -1,18 +1,17 @@
-import { MongoClient } from 'mongodb';
-const client = new MongoClient(process.env.MONGO_URI);
+export default function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method not allowed' });
+  }
 
-export default async function handler(req, res) {
-  if (req.method!== 'POST') return res.status(405).json({error: 'Method not allowed'});
-  try {
-    await client.connect();
-    const db = client.db('cnpanel');
-    const {username, password} = req.body;
-    const admin = await db.collection('admins').findOne({username, password});
-    if(admin){
-      return res.status(200).json({status: 'success', message: 'Login OK'});
-    }
-    return res.status(401).json({status: 'error', message: 'Invalid credentials'});
-  } catch(e){
-    return res.status(500).json({error: e.message});
+  const { username, password } = req.body;
+
+  // උඹට ඕන Username Password මෙතන දාපන්
+  const ADMIN_USER = 'admin';
+  const ADMIN_PASS = 'admin123';
+
+  if (username === ADMIN_USER && password === ADMIN_PASS) {
+    return res.status(200).json({ message: 'Login OK' });
+  } else {
+    return res.status(401).json({ message: 'Invalid credentials' });
   }
 }
