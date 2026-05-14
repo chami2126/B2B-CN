@@ -1,39 +1,109 @@
 <!DOCTYPE html>
-<html>
+<html lang="si">
 <head>
-  <title>SNK Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
   <style>
-    body { font-family: Arial; padding: 20px; }
-    .card { border: 1px solid #ccc; padding: 20px; margin: 10px 0; border-radius: 8px; }
-    button { padding: 10px 15px; background: red; color: white; border: none; cursor: pointer; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .box {
+      cursor: pointer;
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 8px;
+      background: white;
+      margin-bottom: 20px;
+      transition: 0.2s;
+    }
+    .box:hover {
+      background: #f0f0f0;
+    }
+    .messages {
+      display: none;
+      margin-top: 20px;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    .msg-item {
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+    }
+    .delete-btn {
+      background: red;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      margin-top: 5px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <h1>Welcome to SNK Dashboard</h1>
-  
-  <div class="card">
-    <h3>Total Orders</h3>
-    <p>25</p>
-  </div>
-  
-  <div class="card">
+
+  <h1>Admin Dashboard</h1>
+
+  <div class="box" onclick="loadMessages()">
     <h3>Pending Messages</h3>
-    <p>5</p>
+    <p id="pendingCount">Loading...</p>
   </div>
 
-  <button onclick="logout()">Logout</button>
+  <div class="messages" id="messagesList">
+    <h3>Messages</h3>
+    <div id="list"></div>
+  </div>
 
   <script>
-    // Login Check
-    if (localStorage.getItem('loggedIn') !== 'true') {
-      window.location.href = '/';
+    // Page load වෙද්දි count එක ගන්න
+    window.onload = async () => {
+      const res = await fetch('/api/messages');
+      const data = await res.json();
+      document.getElementById('pendingCount').innerText = data.length;
     }
 
-    function logout() {
-      localStorage.removeItem('loggedIn');
-      window.location.href = '/';
+    // Messages load කරන Function එක
+    async function loadMessages() {
+      const res = await fetch('/api/messages');
+      const data = await res.json();
+      
+      document.getElementById('pendingCount').innerText = data.length;
+      document.getElementById('messagesList').style.display = 'block';
+      
+      let html = '';
+      if (data.length === 0) {
+        html = '<p>Messages නෑ</p>';
+      } else {
+        data.forEach(msg => {
+          html += `
+            <div class="msg-item">
+              <b>${msg.name}</b> - ${msg.email}<br>
+              ${msg.message}<br>
+              <small>${msg.created_at}</small><br>
+              <button class="delete-btn" onclick="deleteMsg(${msg.id})">Delete</button>
+            </div>
+          `;
+        });
+      }
+      document.getElementById('list').innerHTML = html;
+    }
+
+    // Message Delete කරන Function එක
+    async function deleteMsg(id) {
+      if (confirm("Delete කරන්නද?")) {
+        await fetch('/api/messages', {
+          method: 'DELETE',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({id})
+        });
+        loadMessages();
+      }
     }
   </script>
+
 </body>
 </html>
