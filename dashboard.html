@@ -4,146 +4,87 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Panel</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-  body { background: #f5f7fa; color: #333; }
+  body { background: #f0f2f5; }
   
-  /* Login Screen */
   #login-screen {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #1e293b;
+    height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   }
   .login-box {
-    background: white;
-    padding: 40px;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    background: white; padding: 40px; border-radius: 16px; width: 90%; max-width: 400px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
   }
-  .login-box h2 { margin-bottom: 20px; color: #1e293b; }
-  .login-box input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    font-size: 14px;
+  .login-box input, .login-box button {
+    width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; font-size: 15px;
   }
+  .login-box input { border: 2px solid #e2e8f0; outline: none; }
   .login-box button {
-    width: 100%;
-    padding: 12px;
-    background: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; cursor: pointer; font-weight: 600;
   }
-  .login-box button:hover { background: #2563eb; }
-  .error { color: #ef4444; font-size: 13px; margin-top: -10px; margin-bottom: 10px; }
   
-  /* Dashboard */
   #dashboard { display: none; }
   .header {
-    background: #1e293b;
-    color: white;
-    padding: 16px 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px;
+    position: sticky; top: 0; z-index: 10;
   }
+  .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+  .header h1 { font-size: 24px; display: flex; align-items: center; gap: 10px; }
   .header button {
-    background: #ef4444;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
+    background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);
+    padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;
   }
   
-  .container { padding: 24px; max-width: 1200px; margin: 0 auto; }
+  .container { padding: 20px; max-width: 1200px; margin: 0 auto; }
   
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
+  .action-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;
+    background: white; padding: 16px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 20px;
   }
-  .stat-card {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  .action-btn {
+    background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px 10px; text-align: center;
+    cursor: pointer; transition: all 0.2s;
   }
-  .stat-card h3 { color: #64748b; font-size: 14px; font-weight: 500; }
-  .stat-card p { font-size: 32px; font-weight: 700; margin-top: 8px; color: #1e293b; }
+  .action-btn.active { border-color: #667eea; background: #f5f7ff; }
+  .action-btn:hover { box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2); transform: translateY(-2px); }
+  .action-btn i { font-size: 24px; color: #667eea; margin-bottom: 8px; display: block; }
+  .action-btn span { font-size: 13px; font-weight: 600; color: #334155; }
+  
+  .content-section { display: none; }
+  .content-section.active { display: block; }
   
   .card {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    overflow-x: auto;
+    background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 20px;
   }
-  .card-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid #e2e8f0;
-    font-weight: 600;
-    font-size: 16px;
-  }
+  .card h3 { margin-bottom: 16px; color: #1e293b; }
   
-  table { width: 100%; border-collapse: collapse; min-width: 700px; }
+  table { width: 100%; border-collapse: collapse; }
   th {
-    text-align: left;
-    padding: 12px 20px;
-    background: #f8fafc;
-    font-size: 13px;
-    color: #64748b;
-    font-weight: 600;
-    text-transform: uppercase;
+    text-align: left; padding: 12px; background: #f8fafc; font-size: 12px; color: #64748b;
+    font-weight: 600; text-transform: uppercase;
   }
-  td {
-    padding: 14px 20px;
-    border-top: 1px solid #e2e8f0;
-    font-size: 14px;
-  }
-  tr:hover { background: #f8fafc; }
+  td { padding: 14px 12px; border-top: 1px solid #e2e8f0; font-size: 14px; }
   
-  .badge {
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
+  input, select, textarea {
+    width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 12px;
   }
-  .badge-pending { background: #fef3c7; color: #92400e; }
-  .badge-replied { background: #d1fae5; color: #065f46; }
-  
   .btn {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 13px;
-    margin-right: 6px;
+    padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;
+    background: #667eea; color: white;
   }
-  .btn-reply { background: #3b82f6; color: white; }
-  .btn-delete { background: #ef4444; color: white; }
-  .btn:hover { opacity: 0.9; }
-  
+  .btn-danger { background: #ef4444; }
   .empty { text-align: center; padding: 40px; color: #64748b; }
 </style>
 </head>
 <body>
 
-<!-- Login Screen -->
+<!-- Login -->
 <div id="login-screen">
   <div class="login-box">
-    <h2>Admin Login</h2>
+    <h2><i class="fa-solid fa-lock"></i> Admin Login</h2>
     <input type="password" id="password" placeholder="Enter password">
-    <div class="error" id="error"></div>
     <button onclick="login()">Login</button>
   </div>
 </div>
@@ -151,40 +92,120 @@
 <!-- Dashboard -->
 <div id="dashboard">
   <div class="header">
-    <h1>Admin Dashboard</h1>
-    <button onclick="logout()">Logout</button>
+    <div class="header-top">
+      <h1><i class="fa-solid fa-crown"></i> Admin Panel</h1>
+      <button onclick="logout()">Logout</button>
+    </div>
   </div>
   
   <div class="container">
-    <div class="stats">
-      <div class="stat-card">
-        <h3>Total Messages</h3>
-        <p id="total">0</p>
+    <!-- Menu Buttons -->
+    <div class="action-grid">
+      <div class="action-btn active" onclick="showSection('users')">
+        <i class="fa-solid fa-user-plus"></i>
+        <span>+ USERS</span>
       </div>
-      <div class="stat-card">
-        <h3>Pending</h3>
-        <p id="pending">0</p>
+      <div class="action-btn" onclick="showSection('news')">
+        <i class="fa-solid fa-newspaper"></i>
+        <span>UPDATE NEWS</span>
       </div>
-      <div class="stat-card">
-        <h3>Replied</h3>
-        <p id="replied">0</p>
+      <div class="action-btn" onclick="showSection('transfer')">
+        <i class="fa-solid fa-money-bill-transfer"></i>
+        <span>BALANCE TRANSFER</span>
+      </div>
+      <div class="action-btn" onclick="showSection('commission')">
+        <i class="fa-solid fa-percent"></i>
+        <span>SET COMMISSION</span>
+      </div>
+      <div class="action-btn" onclick="showSection('enquiry')">
+        <i class="fa-solid fa-envelope"></i>
+        <span>SITE ENQUIRY</span>
+      </div>
+      <div class="action-btn" onclick="showSection('history')">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <span>RECHARGE HISTORY</span>
       </div>
     </div>
     
-    <div class="card">
-      <div class="card-header">Messages</div>
-      <div id="table-container">
-        <div class="empty">Loading...</div>
+    <!-- USERS Section -->
+    <div id="users" class="content-section active">
+      <div class="card">
+        <h3>Add New User</h3>
+        <input type="text" placeholder="Username">
+        <input type="email" placeholder="Email">
+        <input type="password" placeholder="Password">
+        <select>
+          <option>User Role</option>
+          <option>Admin</option>
+          <option>User</option>
+          <option>Agent</option>
+        </select>
+        <button class="btn">Create User</button>
+      </div>
+      <div class="card">
+        <h3>All Users</h3>
+        <div class="empty">No users yet. Connect to API to load users.</div>
+      </div>
+    </div>
+    
+    <!-- NEWS Section -->
+    <div id="news" class="content-section">
+      <div class="card">
+        <h3>Post News</h3>
+        <input type="text" placeholder="News Title">
+        <textarea rows="4" placeholder="News Content"></textarea>
+        <button class="btn">Publish News</button>
+      </div>
+    </div>
+    
+    <!-- TRANSFER Section -->
+    <div id="transfer" class="content-section">
+      <div class="card">
+        <h3>Balance Transfer</h3>
+        <input type="text" placeholder="To Username">
+        <input type="number" placeholder="Amount">
+        <button class="btn">Transfer</button>
+      </div>
+    </div>
+    
+    <!-- COMMISSION Section -->
+    <div id="commission" class="content-section">
+      <div class="card">
+        <h3>Set Commission</h3>
+        <select>
+          <option>Select Service</option>
+          <option>Mobile Recharge</option>
+          <option>Electricity Bill</option>
+          <option>DTH Recharge</option>
+        </select>
+        <input type="number" placeholder="Commission %">
+        <button class="btn">Update Commission</button>
+      </div>
+    </div>
+    
+    <!-- ENQUIRY Section -->
+    <div id="enquiry" class="content-section">
+      <div class="card">
+        <h3>Site Messages</h3>
+        <div id="messages-container">
+          <div class="empty">Loading messages...</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- HISTORY Section -->
+    <div id="history" class="content-section">
+      <div class="card">
+        <h3>Recharge History</h3>
+        <div class="empty">No transactions yet. Connect to API.</div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-const API_URL = '/api/messages';
-const ADMIN_PASSWORD = 'admin123'; // Change this password
+const ADMIN_PASSWORD = 'admin123';
 
-// Check if already logged in
 if (sessionStorage.getItem('loggedIn') === 'true') {
   showDashboard();
 }
@@ -195,7 +216,7 @@ function login() {
     sessionStorage.setItem('loggedIn', 'true');
     showDashboard();
   } else {
-    document.getElementById('error').textContent = 'Wrong password!';
+    alert('Wrong password!');
   }
 }
 
@@ -208,57 +229,55 @@ function showDashboard() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('dashboard').style.display = 'block';
   loadMessages();
-  setInterval(loadMessages, 10000);
+}
+
+function showSection(sectionId) {
+  document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.action-btn').forEach(b => b.classList.remove('active'));
+  
+  document.getElementById(sectionId).classList.add('active');
+  event.currentTarget.classList.add('active');
+  
+  if(sectionId === 'enquiry') loadMessages();
 }
 
 async function loadMessages() {
   try {
-    const res = await fetch(API_URL);
+    const res = await fetch('/api/messages');
     const data = await res.json();
     
-    document.getElementById('total').textContent = data.length;
-    document.getElementById('pending').textContent = data.filter(m => m.status === 'pending').length;
-    document.getElementById('replied').textContent = data.filter(m => m.status === 'replied').length;
-    
     if (data.length === 0) {
-      document.getElementById('table-container').innerHTML = '<div class="empty">No messages yet</div>';
+      document.getElementById('messages-container').innerHTML = '<div class="empty">No messages yet</div>';
       return;
     }
     
-    let html = '<table><thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Message</th><th>Status</th><th>Action</th></tr></thead><tbody>';
-    
+    let html = '<table><thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Message</th><th>Action</th></tr></thead><tbody>';
     data.forEach(msg => {
-      const date = new Date(msg.created_at).toLocaleString('en-US', {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'});
-      const statusClass = msg.status === 'pending' ? 'badge-pending' : 'badge-replied';
-      
+      const date = new Date(msg.created_at).toLocaleString();
       html += `
         <tr>
           <td>${date}</td>
           <td>${msg.name}</td>
           <td>${msg.email}</td>
           <td>${msg.message}</td>
-          <td><span class="badge ${statusClass}">${msg.status}</span></td>
           <td>
-            <button class="btn btn-reply" onclick="reply(${msg.id})">Reply</button>
-            <button class="btn btn-delete" onclick="del(${msg.id})">Delete</button>
+            <button class="btn" onclick="reply(${msg.id})">Reply</button>
+            <button class="btn btn-danger" onclick="del(${msg.id})">Delete</button>
           </td>
         </tr>
       `;
     });
-    
     html += '</tbody></table>';
-    document.getElementById('table-container').innerHTML = html;
-    
-  } catch (e) {
-    document.getElementById('table-container').innerHTML = '<div class="empty">Error loading messages</div>';
+    document.getElementById('messages-container').innerHTML = html;
+  } catch(e) {
+    document.getElementById('messages-container').innerHTML = '<div class="empty">Error loading</div>';
   }
 }
 
 async function reply(id) {
-  const msg = prompt('Type your reply:');
+  const msg = prompt('Type reply:');
   if (!msg) return;
-  
-  await fetch(`${API_URL}?id=${id}`, {
+  await fetch(`/api/messages?id=${id}`, {
     method: 'PUT',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({status: 'replied', reply: msg})
@@ -267,15 +286,10 @@ async function reply(id) {
 }
 
 async function del(id) {
-  if (!confirm('Delete this message?')) return;
-  await fetch(`${API_URL}?id=${id}`, { method: 'DELETE' });
+  if (!confirm('Delete?')) return;
+  await fetch(`/api/messages?id=${id}`, { method: 'DELETE' });
   loadMessages();
 }
-
-// Enter key for login
-document.getElementById('password').addEventListener('keypress', function(e) {
-  if (e.key === 'Enter') login();
-});
 </script>
 </body>
 </html>
