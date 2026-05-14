@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head><title>CN Admin</title></head>
+<body style="font-family:Arial; text-align:center; margin-top:100px;">
+  <h2>SNK Admin Login</h2>
+  <input id="user" placeholder="Username"><br><br>
+  <input id="pass" type="password" placeholder="Password"><br><br>
+  <button onclick="login()">Login</button>
+  <p id="msg"></p>
+  <script>
+  async function login(){
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        username: document.getElementById('user').value,
+        password: document.getElementById('pass').value
+      })
+    });
+    const data = await res.json();
+    document.getElementById('msg').innerText = data.message;
+  }
+  </script>
+</body>
+</html>
